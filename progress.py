@@ -15,6 +15,14 @@ class BarStyle:
         if self.border_right is None:
             self.border_right = self.empty
 
+    @classmethod
+    def preset(cls, name: str):
+        return cls(
+            **{
+            'rocket': {'full': '  ', 'empty': '  ', 'first': '🌎', 'last': '🌕', 'border_left': '🔥', 'border_right': '🚀'},
+            'blocky': {'full': '█', 'empty': ' ', 'first': '█', 'last': '█'},
+            'arrow': {'full': '-', 'border_right': '>'},
+            }[name])
 
 class ProgressBar:
     __HIDE_CURSOR = "\x1b[?25l"
