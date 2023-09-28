@@ -1,28 +1,32 @@
+from dataclasses import dataclass
+
+@dataclass
 class BarStyle:
-    def __init__(self, full='#', empty=' ', first='[', last=']', border_left=None, border_right=None):
-        if border_left is None:
-            border_left = full
-        if border_right is None:
-            border_right = empty
-        self.full = full
-        self.empty = empty
-        self.first = first
-        self.last = last
-        self.border_left = border_left
-        self.border_right = border_right
+    full: str = '#'
+    empty: str = ' '
+    first: str = '['
+    last: str = ']'
+    border_left: str = None
+    border_right: str = None
+
+    def __post_init__(self):
+        if self.border_left is None:
+            self.border_left = self.full
+        if self.border_right is None:
+            self.border_right = self.empty
 
 
 class ProgressBar:
     __HIDE_CURSOR = "\x1b[?25l"
     __SHOW_CURSOR = "\x1b[?25h"
 
-    def __init__(self, size=10, bar_style=None):
+    def __init__(self, size: int=10, bar_style: BarStyle=None):
         self.__size = size
         if bar_style is None:
             bar_style = BarStyle('#', ' ', '[', ']')
         self.__bar_style = bar_style
 
-    def display(self, progress):
+    def display(self, progress:float) -> None:
         n_full_chars = round(progress * self.__size)
         n_empty_chars = self.__size - n_full_chars
         bar = ''
