@@ -19,7 +19,7 @@ class BarStyle:
     def preset(cls, name: str):
         return cls(
             **{
-            'rocket': {'full': '  ', 'empty': '  ', 'first': '🌎', 'last': '🌕', 'border_left': '🔥', 'border_right': '🚀'},
+            'rocket': {'full': '  ', 'empty': '  ', 'first': '🌎', 'last': '🌕', 'border_left': '🔥🚀', 'border_right': ''},
             'blocky': {'full': '█', 'empty': ' ', 'first': '█', 'last': '█'},
             'arrow': {'full': '-', 'border_right': '>'},
             }[name])
@@ -34,19 +34,23 @@ class ProgressBar:
             bar_style = BarStyle('#', ' ', '[', ']')
         self.__bar_style = bar_style
 
-    def display(self, progress:float) -> None:
-        n_full_chars = round(progress * self.__size)
+    def __get_bar(self, n_full_chars) -> str:
         n_empty_chars = self.__size - n_full_chars
         bar = ''
         bar += self.__bar_style.first
         if n_full_chars > 0:
-            bar += self.__bar_style.full * (n_full_chars-1)
-            bar += self.__bar_style.border_left
+            if n_full_chars > len(self.__bar_style.border_left):
+                bar += self.__bar_style.full * (n_full_chars-len(self.__bar_style.border_left))
+            bar += self.__bar_style.border_left[-min(n_full_chars, len(self.__bar_style.border_left)):]
         if n_empty_chars > 0:
-            bar += self.__bar_style.border_right
-            bar += self.__bar_style.empty * (n_empty_chars-1)
+            bar += self.__bar_style.border_right[:min(n_empty_chars, len(self.__bar_style.border_right))]
+            if n_empty_chars > len(self.__bar_style.border_right):
+                bar += self.__bar_style.empty * (n_empty_chars-len(self.__bar_style.border_right))
         bar += self.__bar_style.last
-        print(bar, end='\r')
+        return bar
+
+    def display(self, progress:float) -> None:
+        print(self.__get_bar(round(progress * self.__size)), end='\r')
 
 
     def __enter__(self):
